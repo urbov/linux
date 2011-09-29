@@ -351,8 +351,15 @@ static int ks8851_write_mac_addr(struct net_device *dev)
 
 	mutex_lock(&ks->lock);
 
+	/*
+	 * Wake up chip in case it was powered off when stopped; otherwise,
+	 * the first write to the MAC address does not take effect.
+	 */
+	ks8851_set_powermode(ks, PMECR_PM_NORMAL);
 	for (i = 0; i < ETH_ALEN; i++)
 		ks8851_wrreg8(ks, KS_MAR(i), dev->dev_addr[i]);
+	if (!netif_running(dev))
+		ks8851_set_powermode(ks, PMECR_PM_SOFTDOWN);
 
 	mutex_unlock(&ks->lock);
 
@@ -1699,7 +1706,6 @@ static int __devinit ks8851_probe(struct spi_device *spi)
 
 	ks->netdev = ndev;
 	ks->spidev = spi;
-	ks->tx_space = 6144;
 
 	mutex_init(&ks->lock);
 	spin_lock_init(&ks->statelock);
@@ -1771,6 +1777,7 @@ static int __devinit ks8851_probe(struct spi_device *spi)
 
 	/* cache the contents of the CCR register for EEPROM, etc. */
 	ks->rc_ccr = ks8851_rdreg16(ks, KS_CCR);
+	ks->tx_space = ks8851_rdreg16(ks, KS_TXMIR);
 
 	ks8851_read_selftest(ks);
 	ks8851_init_mac(ks);
