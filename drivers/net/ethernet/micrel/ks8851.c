@@ -1499,7 +1499,6 @@ static void ks8851_eeprom_regwrite(struct eeprom_93cx6 *ee)
 	if (ee->reg_chip_select)
 		val |= EEPCR_EECS;
 
-	printk(KERN_INFO "%s: wr %04x\n", __func__, val);
 	ks8851_wrreg16(ks, KS_EEPCR, val);
 }
 
@@ -1514,6 +1513,8 @@ static int ks8851_eeprom_claim(struct ks8851_net *ks)
 {
 	if (!(ks->rc_ccr & CCR_EEPROM))
 		return -ENOENT;
+
+	mutex_lock(&ks->lock);
 
 	/* start with clock low, cs high */
 	ks8851_wrreg16(ks, KS_EEPCR, EEPCR_EESA | EEPCR_EECS);
@@ -1531,6 +1532,7 @@ static void ks8851_eeprom_release(struct ks8851_net *ks)
 	unsigned val = ks8851_rdreg16(ks, KS_EEPCR);
 
 	ks8851_wrreg16(ks, KS_EEPCR, val & ~EEPCR_EESA);
+	mutex_unlock(&ks->lock);
 }
 
 static const struct ethtool_ops ks8851_ethtool_ops = {
