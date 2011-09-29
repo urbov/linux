@@ -46,19 +46,6 @@ struct ks8851_rxctrl {
 	u16	rxcr2;
 };
 
-/**
- * union ks8851_tx_hdr - tx header data
- * @txb: The header as bytes
- * @txw: The header as 16bit, little-endian words
- *
- * A dual representation of the tx header data to allow
- * access to individual bytes, and to allow 16bit accesses
- * with 16bit alignment.
- */
-union ks8851_tx_hdr {
-	u8	txb[6];
-	__le16	txw[3];
-};
 
 /**
  * struct ks8851_net - KS8851 driver private data

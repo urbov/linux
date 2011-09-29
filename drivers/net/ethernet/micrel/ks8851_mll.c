@@ -76,20 +76,6 @@ static u8 KS_DEFAULT_MAC_ADDRESS[] = { 0x00, 0x10, 0xA1, 0x86, 0x95, 0x11 };
 #define HW_MCAST_SIZE			8
 
 /**
- * union ks_tx_hdr - tx header data
- * @txb: The header as bytes
- * @txw: The header as 16bit, little-endian words
- *
- * A dual representation of the tx header data to allow
- * access to individual bytes, and to allow 16bit accesses
- * with 16bit alignment.
- */
-union ks_tx_hdr {
-	u8      txb[4];
-	__le16  txw[2];
-};
-
-/**
  * struct ks_net - KS8851 driver private data
  * @net_device 	: The network device we're bound to
  * @hw_addr	: start address of data register.
@@ -141,7 +127,7 @@ struct ks_net {
 	struct net_device	*netdev;
 	void __iomem    	*hw_addr;
 	void __iomem    	*hw_addr_cmd;
-	union ks_tx_hdr		txh ____cacheline_aligned;
+	union ks8851_tx_hdr	txh ____cacheline_aligned;
 	struct mutex      	lock; /* spinlock to be interrupt safe */
 	struct platform_device *pdev;
 	struct mii_if_info	mii;
