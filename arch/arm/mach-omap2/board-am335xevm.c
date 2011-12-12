@@ -1560,7 +1560,6 @@ static struct evm_dev_cfg ip_phn_evm_dev_cfg[] = {
 /* Beaglebone < Rev A3 */
 static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 	{rmii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
-	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
@@ -1573,7 +1572,6 @@ static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 /* Beaglebone Rev A3 and after */
 static struct evm_dev_cfg beaglebone_dev_cfg[] = {
 	{mii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
-	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
