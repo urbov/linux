@@ -380,7 +380,7 @@ static struct fb_ops st7735fb_ops = {
 };
 
 static struct fb_deferred_io st7735fb_defio = {
-	.delay		= HZ / 16,
+	.delay		= HZ / 50,
 	.deferred_io	= st7735fb_deferred_io,
 };
 
