@@ -360,6 +360,12 @@ static u32 am335x_get_profile_selection(void)
 		return val & 0x7;
 }
 
+/* Module pin mux for LCD Cape. LCDC pinmux already being set */
+static struct pinmux_config lcd_cape_pin_mux[] = {
+	{"gpmc_a2.gpio1_18", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT},
+	{NULL, 0},
+};
+
 /* Module pin mux for LCDC */
 static struct pinmux_config lcdc_pin_mux[] = {
 	{"lcd_data0.lcd_data0",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
@@ -879,9 +885,6 @@ static struct pinmux_config profibus_pin_mux[] = {
 #define BEAGLEBONE_USR3_LED  GPIO_TO_PIN(1, 23)
 #define BEAGLEBONE_USR4_LED  GPIO_TO_PIN(1, 24)
 
-#define BEAGLEBONEDVI_USR0_LED  GPIO_TO_PIN(1, 18)
-#define BEAGLEBONEDVI_USR1_LED  GPIO_TO_PIN(1, 19)
-
 static struct gpio_led gpio_leds[] = {
 	{
 		.name			= "beaglebone::usr0",
@@ -900,16 +903,6 @@ static struct gpio_led gpio_leds[] = {
 	{
 		.name           = "beaglebone::usr3",
 		.gpio           = BEAGLEBONE_USR4_LED,
-	},
-	{
-		.name			= "dvi::usr0",
-		.default_trigger	= "heartbeat",
-		.gpio			= BEAGLEBONEDVI_USR0_LED,
-	},
-	{
-		.name           = "dvi::usr1",
-		.default_trigger	= "mmc0",
-		.gpio           = BEAGLEBONEDVI_USR1_LED,
 	},
 };
 
@@ -1023,6 +1016,9 @@ out:
 	return ret;
 }
 
+#define BEAGLEBONE_LCD_AVDD_EN GPIO_TO_PIN(0, 7)
+#define BEAGLEBONE_LCD_BL GPIO_TO_PIN(1, 18)
+
 static void lcdc_init(int evm_id, int profile)
 {
 
@@ -1036,6 +1032,18 @@ static void lcdc_init(int evm_id, int profile)
 
 	if (am33xx_register_lcdc(&TFC_S9700RTWV35TR_01B_pdata))
 		pr_info("Failed to register LCDC device\n");
+	return;
+}
+
+static void bone_lcdc_init(int evm_id, int profile)
+{
+	setup_pin_mux(lcd_cape_pin_mux);
+	lcdc_init(evm_id, profile);
+
+	gpio_request(BEAGLEBONE_LCD_BL, "BONE_LCD_BL");
+	gpio_direction_output(BEAGLEBONE_LCD_BL, 1);
+	gpio_request(BEAGLEBONE_LCD_AVDD_EN, "BONE_LCD_AVDD_EN");
+	gpio_direction_output(BEAGLEBONE_LCD_AVDD_EN, 1);
 	return;
 }
 
@@ -1663,7 +1671,7 @@ static struct evm_dev_cfg ip_phn_evm_dev_cfg[] = {
 /* Beaglebone < Rev A3 */
 static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 	{rmii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
-	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
+	{bone_lcdc_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
@@ -1676,6 +1684,7 @@ static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 static struct evm_dev_cfg beaglebone_dev_cfg[] = {
 	{mii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
+	{bone_lcdc_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
