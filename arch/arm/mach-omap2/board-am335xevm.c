@@ -1148,13 +1148,40 @@ static struct i2c_board_info beaglebone_i2c_boardinfo2[] = {
 	},
 };
 
+static struct at24_platform_data cape_eeprom_info = {
+        .byte_len       = (256*1024) / 8,
+        .page_size      = 64,
+        .flags          = AT24_FLAG_ADDR16,
+        .context        = (void *)NULL,
+};
+
+static struct i2c_board_info __initdata cape_i2c_boardinfo[] = {
+        {
+                I2C_BOARD_INFO("24c256", 0x54),
+                .platform_data  = &cape_eeprom_info,
+        },
+        {
+                I2C_BOARD_INFO("24c256", 0x55),
+                .platform_data  = &cape_eeprom_info,
+        },
+        {
+                I2C_BOARD_INFO("24c256", 0x56),
+                .platform_data  = &cape_eeprom_info,
+        },
+        {
+                I2C_BOARD_INFO("24c256", 0x57),
+                .platform_data  = &cape_eeprom_info,
+        },
+};
+
 static void i2c2_init(int evm_id, int profile)
 {
-	setup_pin_mux(i2c2_pin_mux);
-	omap_register_i2c_bus(3, 100, beaglebone_i2c_boardinfo2,
-			ARRAY_SIZE(beaglebone_i2c_boardinfo2));
-	return;
+        setup_pin_mux(i2c2_pin_mux);
+        omap_register_i2c_bus(3, 100, cape_i2c_boardinfo,
+                        ARRAY_SIZE(cape_i2c_boardinfo));
+        return;
 }
+
 
 /* Setup McASP 1 */
 static void mcasp1_init(int evm_id, int profile)
