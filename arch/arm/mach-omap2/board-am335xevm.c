@@ -118,8 +118,8 @@
 
 static const struct display_panel disp_panel = {
 	WVGA,
-	32,
-	32,
+	16,
+	16,
 	COLOR_ACTIVE,
 };
 
@@ -128,7 +128,7 @@ static struct lcd_ctrl_config lcd_cfg = {
 	.ac_bias		= 255,
 	.ac_bias_intrpt		= 0,
 	.dma_burst_sz		= 16,
-	.bpp			= 32,
+	.bpp			= 16,
 	.fdd			= 0x80,
 	.tft_alt_mode		= 0,
 	.stn_565_mode		= 0,
@@ -928,7 +928,7 @@ static void dvi_init(int evm_id, int profile)
 		return;
 	}
 	
-	if (am33xx_register_lcdc(&dvi_pdata))
+	if (am33xx_register_lcdc(&TFC_S9700RTWV35TR_01B_pdata))
 		pr_info("Failed to register BeagleBoardToys DVI adapter\n");
 	return;
 }
