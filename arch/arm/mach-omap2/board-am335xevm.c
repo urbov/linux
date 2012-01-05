@@ -146,6 +146,36 @@ struct da8xx_lcdc_platform_data TFC_S9700RTWV35TR_01B_pdata = {
 	.type			= "TFC_S9700RTWV35TR_01B",
 };
 
+static const struct display_panel bbtoys7_panel = {
+	WVGA,
+	16,
+	16,
+	COLOR_ACTIVE,
+};
+
+static struct lcd_ctrl_config bbtoys7_cfg = {
+	&disp_panel,
+	.ac_bias		= 255,
+	.ac_bias_intrpt		= 0,
+	.dma_burst_sz		= 16,
+	.bpp			= 16,
+	.fdd			= 0x80,
+	.tft_alt_mode		= 0,
+	.stn_565_mode		= 0,
+	.mono_8bit_mode		= 0,
+	.invert_line_clock	= 1,
+	.invert_frm_clock	= 1,
+	.sync_edge		= 0,
+	.sync_ctrl		= 1,
+	.raster_order		= 0,
+};
+
+struct da8xx_lcdc_platform_data bbtoys7_pdata = {
+	.manu_name		= "ThreeFive",
+	.controller_data	= &bbtoys7_cfg,
+	.type			= "TFC_S9700RTWV35TR_01B",
+};
+
 static const struct display_panel dvi_panel = {
 	WVGA,
 	16,
@@ -422,7 +452,7 @@ static struct pinmux_config lcdc_pin_mux[] = {
 	{NULL, 0},
 };
 
-/* Module pin mux for DVI board */
+/* Module pin mux for Beagleboardtoys DVI cape */
 static struct pinmux_config dvi_pin_mux[] = {
 	{"lcd_data0.lcd_data0",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
         | AM33XX_PULL_DISA},
@@ -463,6 +493,49 @@ static struct pinmux_config dvi_pin_mux[] = {
 	{"gpmc_a2.rgmii2_td3", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // USR0 LED
 	{"gpmc_a3.rgmii2_td2", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // USR1 LED
 	{"gpmc_ad7.gpmc_ad7", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // DVI PDn
+	{NULL, 0},
+};
+
+/* Module pin mux for Beagleboardtoys 7" LCD cape */
+static struct pinmux_config bbtoys7_pin_mux[] = {
+	{"lcd_data0.lcd_data0",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data1.lcd_data1",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data2.lcd_data2",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data3.lcd_data3",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data4.lcd_data4",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data5.lcd_data5",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data6.lcd_data6",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data7.lcd_data7",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data8.lcd_data8",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data9.lcd_data9",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data10.lcd_data10",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data11.lcd_data11",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data12.lcd_data12",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data13.lcd_data13",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data14.lcd_data14",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_data15.lcd_data15",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
+        | AM33XX_PULL_DISA},
+	{"lcd_vsync.lcd_vsync",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
+	{"lcd_hsync.lcd_hsync",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
+	{"lcd_pclk.lcd_pclk",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
+	{"lcd_ac_bias_en.lcd_ac_bias_en", OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT}, 
+	{"gpmc_a2.rgmii2_td3", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // Backlight
+	{"ecap0_in_pwm0_out.gpio0_7", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // AVDD_EN
 	{NULL, 0},
 };
 
@@ -773,7 +846,7 @@ static struct gpio_led gpio_leds[] = {
 	},
 	{
 		.name			= "dvi::usr0",
-		.default_trigger	= "heartbeat",
+		.default_trigger	= "default-on",
 		.gpio			= BEAGLEBONEDVI_USR0_LED,
 	},
 	{
@@ -905,6 +978,18 @@ static void lcdc_init(int evm_id, int profile)
 	return;
 }
 
+#define BEAGLEBONE_LCD_AVDD_EN GPIO_TO_PIN(0, 7)
+#define BEAGLEBONE_LCD_BL GPIO_TO_PIN(1, 18)
+
+static void bbtoys7lcd_init(int evm_id, int profile)
+{
+    setup_pin_mux(bbtoys7_pin_mux);
+    
+	if (am33xx_register_lcdc(&bbtoys7_pdata))
+		pr_info("Failed to register Beagleboardtoys 7\" LCD cape device\n");
+	return;
+}
+
 #define BEAGLEBONEDVI_PDn  GPIO_TO_PIN(1, 7)
 
 static void dvi_init(int evm_id, int profile)
@@ -921,7 +1006,7 @@ static void dvi_init(int evm_id, int profile)
 	}
 	
 	if (am33xx_register_lcdc(&dvi_pdata))
-		pr_info("Failed to register BeagleBoardToys DVI adapter\n");
+		pr_info("Failed to register BeagleBoardToys DVI cape\n");
 	return;
 }
 
