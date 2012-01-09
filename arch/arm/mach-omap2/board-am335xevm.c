@@ -334,6 +334,7 @@ static bool daughter_brd_detected;
 #define GP_EVM_REV_IS_1_0		0x1
 #define GP_EVM_REV_IS_1_1A		0x2
 #define GP_EVM_REV_IS_UNKNOWN		0xFF
+#define GP_EVM_ACTUALLY_BEAGLEBONE	0xBB
 static unsigned int gp_evm_revision = GP_EVM_REV_IS_UNKNOWN;
 unsigned int gigabit_enable = 1;
 
@@ -1078,6 +1079,10 @@ static void tsc_init(int evm_id, int profile)
 		am335x_touchscreen_data.analog_input = 0;
 		pr_info("TSC connected to alpha GP EVM\n");
 	}
+	if( gp_evm_revision == GP_EVM_ACTUALLY_BEAGLEBONE) {
+		am335x_touchscreen_data.analog_input = 1;
+		pr_info("TSC connected to BeagleBonei\n");;
+	}
 	setup_pin_mux(tsc_pin_mux);
 	err = platform_device_register(&tsc_device);
 	if (err)
@@ -1685,6 +1690,7 @@ static struct evm_dev_cfg beaglebone_dev_cfg[] = {
 	{mii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{bone_lcdc_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
+	{tsc_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
@@ -1773,6 +1779,8 @@ static void setup_beaglebone_old(void)
 static void setup_beaglebone(void)
 {
 	pr_info("The board is a AM335x Beaglebone.\n");
+
+	gp_evm_revision = GP_EVM_ACTUALLY_BEAGLEBONE;
 
 	/* Beagle Bone has Micro-SD slot which doesn't have Write Protect pin */
 	am335x_mmc[0].gpio_wp = -EINVAL;
