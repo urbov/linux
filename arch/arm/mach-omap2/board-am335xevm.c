@@ -375,6 +375,26 @@ struct am335x_evm_eeprom_config {
 static struct am335x_evm_eeprom_config config;
 static bool daughter_brd_detected;
 
+struct beaglebone_cape_eeprom_config {
+    u32	header;
+    char  format_revision[2];
+    char	name[32];
+    char	version[4];
+    char    manufacturer[16];
+    char    partnumber[16];
+    u16  numpins;
+    char	serial[12];
+    u8	muxdata[170];
+    u16  current_3v3;
+    u16  current_vdd5v;
+    u16  current_sys5v;
+    u16  dc;
+};
+
+static struct beaglebone_cape_eeprom_config cape_config;
+static bool beaglebone_cape_detected;
+
+
 #define GP_EVM_REV_IS_1_0A		0x1
 #define GP_EVM_REV_IS_1_1A		0x2
 #define GP_EVM_REV_IS_UNKNOWN		0xFF
@@ -1233,11 +1253,59 @@ static struct i2c_board_info beaglebone_i2c_boardinfo2[] = {
 	},
 };
 
+static void beaglebone_cape_setup(struct memory_accessor *mem_acc, void *context)
+{
+	int ret;
+	char tmp[32];
+
+	/* get cape specific data */
+	ret = mem_acc->read(mem_acc, (char *)&cape_config, 0, sizeof(cape_config));
+	if (ret != sizeof(cape_config)) {
+		pr_warning("BeagleBone cape EEPROM: config read fail, read %d bytes\n", ret);
+		return;
+	}
+
+	if (cape_config.header != AM335X_EEPROM_HEADER) {
+		pr_warning("BeagleBone Cape EEPROM: wrong header 0x%x, expected 0x%x\n",
+			cape_config.header, AM335X_EEPROM_HEADER);
+		goto out;
+	}
+
+	snprintf(tmp, sizeof(cape_config.name) + 1, "%s", cape_config.name);
+	pr_info("BeagleBone cape name: %s\n", tmp);
+	snprintf(tmp, sizeof(cape_config.version) + 1, "%s", cape_config.version);
+	pr_info("BeagleBone cape version: %s\n", tmp);
+    snprintf(tmp, sizeof(cape_config.manufacturer) + 1, "%s", cape_config.manufacturer);
+	pr_info("BeagleBone cape manufacturer: %s\n", tmp);
+    snprintf(tmp, sizeof(cape_config.partnumber) + 1, "%s", cape_config.partnumber);
+	pr_info("BeagleBone cape partnumber: %s\n", tmp);   
+
+    if (!strncmp("DVI01", cape_config.partnumber, 5)) {
+            pr_info("BeagleBone cape: initializing DVI cape\n");
+            dvi_init(0,0);
+    }
+    if (!strncmp("LCD01", cape_config.partnumber, 5)) {
+        pr_info("BeagleBone cape: initializing LCD cape\n");
+        bbtoys7lcd_init(0,0);
+    }
+	return;
+out:
+	/*
+	 * If the EEPROM hasn't been programed or an incorrect header
+	 * or board name are read, assume this is an old beaglebone board
+	 * (< Rev A3)
+	 */
+	pr_err("Could not detect BeagleBone cape properly\n");
+	beaglebone_cape_detected = false;
+
+}
+
 static struct at24_platform_data cape_eeprom_info = {
         .byte_len       = (256*1024) / 8,
         .page_size      = 64,
         .flags          = AT24_FLAG_ADDR16,
         .context        = (void *)NULL,
+        .setup          = beaglebone_cape_setup,
 };
 
 static struct i2c_board_info __initdata cape_i2c_boardinfo[] = {
@@ -1672,7 +1740,6 @@ static struct evm_dev_cfg ip_phn_evm_dev_cfg[] = {
 /* Beaglebone < Rev A3 */
 static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 	{rmii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
-	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
@@ -1685,7 +1752,6 @@ static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 /* Beaglebone Rev A3 and after */
 static struct evm_dev_cfg beaglebone_dev_cfg[] = {
 	{mii1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
-	{dvi_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{usb0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{usb1_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
