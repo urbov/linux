@@ -1045,6 +1045,7 @@ static void tsc_init(int evm_id, int profile)
 	if (gp_evm_revision == GP_EVM_REV_IS_1_1A) {
 		am335x_touchscreen_data.analog_input = 1;
 		pr_info("TSC connected to beta GP EVM\n");
+    }
 	if {
 		am335x_touchscreen_data.analog_input = 0;
 		pr_info("TSC connected to alpha GP EVM\n");
