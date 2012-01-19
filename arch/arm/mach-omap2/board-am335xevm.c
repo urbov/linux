@@ -1005,12 +1005,13 @@ static void bbtoys7lcd_init(int evm_id, int profile)
     
 	if (am33xx_register_lcdc(&bbtoys7_pdata))
 		pr_info("Failed to register Beagleboardtoys 7\" LCD cape device\n");
-	return;
     
     gpio_request(BEAGLEBONE_LCD_BL, "BONE_LCD_BL");
     gpio_direction_output(BEAGLEBONE_LCD_BL, 1);
     gpio_request(BEAGLEBONE_LCD_AVDD_EN, "BONE_LCD_AVDD_EN");
     gpio_direction_output(BEAGLEBONE_LCD_AVDD_EN, 1);
+
+    return;
 }
 
 #define BEAGLEBONEDVI_PDn  GPIO_TO_PIN(1, 7)
