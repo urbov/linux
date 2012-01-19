@@ -555,7 +555,7 @@ static struct pinmux_config bbtoys7_pin_mux[] = {
 	{"lcd_hsync.lcd_hsync",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
 	{"lcd_pclk.lcd_pclk",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
 	{"lcd_ac_bias_en.lcd_ac_bias_en", OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT}, 
-	{"gpmc_a2.rgmii2_td3", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // Backlight
+	{"gpmc_a2.gpio1_18", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // Backlight
 	{"ecap0_in_pwm0_out.gpio0_7", OMAP_MUX_MODE7 | AM33XX_PIN_OUTPUT}, // AVDD_EN
 	{NULL, 0},
 };
@@ -1021,7 +1021,7 @@ static void bbtoys7lcd_init(int evm_id, int profile)
     gpio_direction_output(BEAGLEBONE_LCD_BL, 1);
     gpio_request(BEAGLEBONE_LCD_AVDD_EN, "BONE_LCD_AVDD_EN");
     gpio_direction_output(BEAGLEBONE_LCD_AVDD_EN, 1);
-    }
+}
 
 #define BEAGLEBONEDVI_PDn  GPIO_TO_PIN(1, 7)
 
