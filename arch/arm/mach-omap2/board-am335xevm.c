@@ -507,14 +507,6 @@ static struct pinmux_config dvi_pin_mux[] = {
 						       | AM33XX_PULL_DISA},
 	{"lcd_data15.lcd_data15",	OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT
 						       | AM33XX_PULL_DISA},
-	{"gpmc_ad8.lcd_data16",		OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad9.lcd_data17",		OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad10.lcd_data18",	OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad11.lcd_data19",	OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad12.lcd_data20",	OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad13.lcd_data21",	OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad14.lcd_data22",	OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
-	{"gpmc_ad15.lcd_data23",	OMAP_MUX_MODE1 | AM33XX_PIN_OUTPUT},
 	{"lcd_vsync.lcd_vsync",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
 	{"lcd_hsync.lcd_hsync",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
 	{"lcd_pclk.lcd_pclk",		OMAP_MUX_MODE0 | AM33XX_PIN_OUTPUT},
@@ -1024,7 +1016,12 @@ static void bbtoys7lcd_init(int evm_id, int profile)
 	if (am33xx_register_lcdc(&bbtoys7_pdata))
 		pr_info("Failed to register Beagleboardtoys 7\" LCD cape device\n");
 	return;
-}
+    
+    gpio_request(BEAGLEBONE_LCD_BL, "BONE_LCD_BL");
+    gpio_direction_output(BEAGLEBONE_LCD_BL, 1);
+    gpio_request(BEAGLEBONE_LCD_AVDD_EN, "BONE_LCD_AVDD_EN");
+    gpio_direction_output(BEAGLEBONE_LCD_AVDD_EN, 1);
+    }
 
 #define BEAGLEBONEDVI_PDn  GPIO_TO_PIN(1, 7)
 
