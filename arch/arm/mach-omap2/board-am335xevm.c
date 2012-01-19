@@ -154,7 +154,7 @@ static const struct display_panel bbtoys7_panel = {
 };
 
 static struct lcd_ctrl_config bbtoys7_cfg = {
-	&disp_panel,
+	&bbtoys7_panel,
 	.ac_bias		= 255,
 	.ac_bias_intrpt		= 0,
 	.dma_burst_sz		= 16,
