@@ -865,16 +865,6 @@ static struct gpio_led gpio_leds[] = {
 		.name           = "beaglebone::usr3",
 		.gpio           = BEAGLEBONE_USR4_LED,
 	},
-	{
-		.name			= "dvi::usr0",
-		.default_trigger	= "default-on",
-		.gpio			= BEAGLEBONEDVI_USR0_LED,
-	},
-	{
-		.name           = "dvi::usr1",
-		.default_trigger	= "mmc0",
-		.gpio           = BEAGLEBONEDVI_USR1_LED,
-	},
 };
 
 static struct gpio_led_platform_data gpio_led_info = {
