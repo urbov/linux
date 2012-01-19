@@ -1266,7 +1266,7 @@ static void beaglebone_cape_setup(struct memory_accessor *mem_acc, void *context
 	/* get cape specific data */
 	ret = mem_acc->read(mem_acc, (char *)&cape_config, 0, sizeof(cape_config));
 	if (ret != sizeof(cape_config)) {
-		pr_warning("BeagleBone cape EEPROM: config read fail, read %d bytes\n", ret);
+		pr_warning("BeagleBone cape EEPROM: could not read eeprom\n", ret);
 		return;
 	}
 
