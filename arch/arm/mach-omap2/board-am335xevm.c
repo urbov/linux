@@ -1005,6 +1005,13 @@ static void lcdc_init(int evm_id, int profile)
 static void bbtoys7lcd_init(int evm_id, int profile)
 {
     setup_pin_mux(bbtoys7_pin_mux);
+
+    // we are being stupid and setting pixclock from here instead of da8xx-fb.c
+	if (conf_disp_pll(300000000)) {
+		pr_info("Failed to set pixclock to 300000000, not attempting to"
+				"register LCD cape\n");
+		return;
+	}
     
 	if (am33xx_register_lcdc(&bbtoys7_pdata))
 		pr_info("Failed to register Beagleboardtoys 7\" LCD cape device\n");
@@ -1038,7 +1045,7 @@ static void tsc_init(int evm_id, int profile)
 	if (gp_evm_revision == GP_EVM_REV_IS_1_1A) {
 		am335x_touchscreen_data.analog_input = 1;
 		pr_info("TSC connected to beta GP EVM\n");
-	} else {
+	if {
 		am335x_touchscreen_data.analog_input = 0;
 		pr_info("TSC connected to alpha GP EVM\n");
     }
