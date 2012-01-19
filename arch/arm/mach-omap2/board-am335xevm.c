@@ -398,6 +398,7 @@ static bool beaglebone_cape_detected;
 #define GP_EVM_REV_IS_1_0A		0x1
 #define GP_EVM_REV_IS_1_1A		0x2
 #define GP_EVM_REV_IS_UNKNOWN		0xFF
+#define GP_EVM_ACTUALLY_BEAGLEBONE  0xBB
 static unsigned int gp_evm_revision = GP_EVM_REV_IS_UNKNOWN;
 
 #define EEPROM_MAC_ADDRESS_OFFSET	60 /* 4+8+4+12+32 */
@@ -1040,8 +1041,12 @@ static void tsc_init(int evm_id, int profile)
 	} else {
 		am335x_touchscreen_data.analog_input = 0;
 		pr_info("TSC connected to alpha GP EVM\n");
-	}
-	setup_pin_mux(tsc_pin_mux);
+    }
+    if( gp_evm_revision == GP_EVM_ACTUALLY_BEAGLEBONE) {
+        am335x_touchscreen_data.analog_input = 1;
+        pr_info("TSC connected to BeagleBone\n");;	
+    }
+    setup_pin_mux(tsc_pin_mux);
 	err = platform_device_register(&tsc_device);
 	if (err)
 		pr_err("failed to register touchscreen device\n");
@@ -1840,6 +1845,7 @@ static void setup_beaglebone_old(void)
 static void setup_beaglebone(void)
 {
 	pr_info("The board is a AM335x Beaglebone.\n");
+    gp_evm_revision = GP_EVM_ACTUALLY_BEAGLEBONE;
 
 	/* Beagle Bone has Micro-SD slot which doesn't have Write Protect pin */
 	am335x_mmc[0].gpio_wp = -EINVAL;
