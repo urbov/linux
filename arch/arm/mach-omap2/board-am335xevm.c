@@ -707,9 +707,9 @@ static struct pinmux_config i2c1_pin_mux[] = {
 
 static struct pinmux_config i2c2_pin_mux[] = {
 	{"uart1_ctsn.i2c2_sda",    OMAP_MUX_MODE3 | AM33XX_SLEWCTRL_SLOW |
-					AM33XX_PULL_ENBL | AM33XX_INPUT_EN},
+					AM33XX_PIN_INPUT_PULLUP},
 	{"uart1_rtsn.i2c2_scl",   OMAP_MUX_MODE3 | AM33XX_SLEWCTRL_SLOW |
-					AM33XX_PULL_ENBL | AM33XX_INPUT_EN},
+					AM33XX_PIN_INPUT_PULLUP},
 	{NULL, 0},
 };
 
