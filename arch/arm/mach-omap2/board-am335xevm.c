@@ -1356,7 +1356,7 @@ static void beaglebone_cape_setup(struct memory_accessor *mem_acc, void *context
 			pr_info("BeagleBone cape: initializing DVI cape\n");
 			dvi_init(0,0);
 	}
-	if (!strncmp("LCD01", cape_config.partnumber, 5)) {
+	if (!strncmp("BB-BONE-LCD7-01", cape_config.partnumber, 5)) {
 		pr_info("BeagleBone cape: initializing LCD cape\n");
 		bbtoys7lcd_init(0,0);
 		pr_info("BeagleBone cape: initializing LCD cape touchscreen\n");
