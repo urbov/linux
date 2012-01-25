@@ -847,10 +847,7 @@ static struct pinmux_config usb1_pin_mux[] = {
 #define BEAGLEBONE_USR3_LED  GPIO_TO_PIN(1, 23)
 #define BEAGLEBONE_USR4_LED  GPIO_TO_PIN(1, 24)
 
-#define BEAGLEBONEDVI_USR0_LED  GPIO_TO_PIN(1, 18)
-#define BEAGLEBONEDVI_USR1_LED  GPIO_TO_PIN(1, 19)
-
-static struct gpio_led gpio_leds[] = {
+static struct gpio_led bone_gpio_leds[] = {
 	{
 		.name			= "beaglebone::usr0",
 		.default_trigger	= "heartbeat",
@@ -871,16 +868,64 @@ static struct gpio_led gpio_leds[] = {
 	},
 };
 
-static struct gpio_led_platform_data gpio_led_info = {
-	.leds		= gpio_leds,
-	.num_leds	= ARRAY_SIZE(gpio_leds),
+static struct gpio_led_platform_data bone_gpio_led_info = {
+	.leds		= bone_gpio_leds,
+	.num_leds	= ARRAY_SIZE(bone_gpio_leds),
 };
 
-static struct platform_device leds_gpio = {
+static struct platform_device bone_leds_gpio = {
 	.name	= "leds-gpio",
 	.id	= -1,
 	.dev	= {
-		.platform_data	= &gpio_led_info,
+		.platform_data	= &bone_gpio_led_info,
+	},
+};
+
+
+#define BEAGLEBONEDVI_USR0_LED  GPIO_TO_PIN(1, 18)
+#define BEAGLEBONEDVI_USR1_LED  GPIO_TO_PIN(1, 19)
+
+static struct gpio_led dvi_gpio_leds[] = {
+	{
+		.name			= "beaglebone::usr0",
+		.default_trigger	= "heartbeat",
+		.gpio			= BEAGLEBONE_USR1_LED,
+	},
+	{
+		.name			= "beaglebone::usr1",
+		.default_trigger	= "mmc0",
+		.gpio			= BEAGLEBONE_USR2_LED,
+	},
+	{
+		.name			= "beaglebone::usr2",
+		.gpio			= BEAGLEBONE_USR3_LED,
+	},
+	{
+		.name           = "beaglebone::usr3",
+		.gpio           = BEAGLEBONE_USR4_LED,
+	},
+	{
+		.name			= "dvi::usr0",
+		.default_trigger	= "heartbeat",
+		.gpio			= BEAGLEBONEDVI_USR0_LED,
+	},
+	{
+		.name			= "dvi::usr1",
+		.default_trigger	= "mmc0",
+		.gpio			= BEAGLEBONEDVI_USR1_LED,
+	},
+};
+
+static struct gpio_led_platform_data dvi_gpio_led_info = {
+	.leds		= dvi_gpio_leds,
+	.num_leds	= ARRAY_SIZE(dvi_gpio_leds),
+};
+
+static struct platform_device dvi_leds_gpio = {
+	.name	= "leds-gpio",
+	.id	= -1,
+	.dev	= {
+		.platform_data	= &dvi_gpio_led_info,
 	},
 };
 
@@ -1074,9 +1119,17 @@ static void boneleds_init(int evm_id, int profile )
 {
 	int err;
 	setup_pin_mux(bone_pin_mux);
-	err = platform_device_register(&leds_gpio);
+	err = platform_device_register(&bone_leds_gpio);
 	if (err)
 		pr_err("failed to register BeagleBone LEDS\n");
+}
+
+static void dvileds_init(int evm_id, int profile )
+{
+	int err;
+	err = platform_device_register(&dvi_leds_gpio);
+	if (err)
+		pr_err("failed to register BeagleBone DVI cape LEDS\n");
 }
 
 static void rgmii1_init(int evm_id, int profile)
