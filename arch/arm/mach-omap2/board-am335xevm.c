@@ -248,11 +248,11 @@ static struct resource tsc_resources[]  = {
 static struct tsc_data am335x_touchscreen_data  = {
 	.wires  = 4,
 	.x_plate_resistance = 200,
-//	.mode = TI_TSCADC_TSCMODE,
+	.mode = TI_TSCADC_TSCMODE,
 };
 
 static struct tsc_data bone_touchscreen_data  = {
-//	.mode = TI_TSCADC_GENMODE,
+	.mode = TI_TSCADC_GENMODE,
 };
 
 static struct platform_device tsc_device = {
@@ -2182,7 +2182,6 @@ static struct evm_dev_cfg beaglebone_old_dev_cfg[] = {
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{mmc0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{boneleds_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
-	{bone_tsc_init, 	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{NULL, 0, 0},
 };
 
@@ -2195,7 +2194,6 @@ static struct evm_dev_cfg beaglebone_dev_cfg[] = {
 	{i2c2_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{mmc0_init,	DEV_ON_BASEBOARD, PROFILE_NONE},
 	{boneleds_init,	DEV_ON_BASEBOARD, PROFILE_ALL},
-	{bone_tsc_init, 	DEV_ON_BASEBOARD, PROFILE_ALL},
 	{NULL, 0, 0},
 };
 
