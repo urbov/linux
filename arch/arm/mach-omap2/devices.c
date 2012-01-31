@@ -1278,6 +1278,19 @@ void register_ehrpwm(int max_freq)
 	platform_device_register(&am335x_epwm2_device);
 }
 
+void register_ehrpwm1(int max_freq)
+{
+	int val;
+
+	val = __raw_readw(AM33XX_CTRL_REGADDR(AM33XX_PWMSS_CTRL));
+	val |= PWMSS1_TBCLKEN;
+	__raw_writew(val, AM33XX_CTRL_REGADDR(AM33XX_PWMSS_CTRL));
+	am335x_pwmss_config1.chan_attrib[1].max_freq = max_freq;
+	sema_init(&am335x_pwmss_config1.config_semaphore, 1);
+	am335x_pwmss_config1.version = PWM_VERSION_1;
+	platform_device_register(&am335x_epwm1_device);
+}
+
 static struct resource am335x_ecap0_resurce[] = {
 	{
 		.start = AM33XX_EPWMSS0_BASE ,
