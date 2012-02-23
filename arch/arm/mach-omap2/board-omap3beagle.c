@@ -411,6 +411,24 @@ static struct regulator_consumer_supply beagle_vsim_supply[] = {
 	REGULATOR_SUPPLY("vmmc_aux", "omap_hsmmc.0"),
 };
 
+static struct regulator_consumer_supply beagle_usb_supply[] = {
+	REGULATOR_SUPPLY("hsusb0", "ehci-omap.0"),
+	REGULATOR_SUPPLY("hsusb1", "ehci-omap.0")
+};
+
+static struct regulator_init_data usb_power = {
+	.constraints = {
+		.min_uV			= 1800000,
+		.max_uV			= 1800000,
+		.valid_modes_mask	= REGULATOR_MODE_NORMAL,
+		.valid_ops_mask		= REGULATOR_CHANGE_VOLTAGE
+					| REGULATOR_CHANGE_MODE
+					| REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies = ARRAY_SIZE(beagle_usb_supply),
+	.consumer_supplies = beagle_usb_supply
+};
+
 static struct gpio_led gpio_leds[];
 
 static int beagle_twl_gpio_setup(struct device *dev,
@@ -513,6 +531,7 @@ static struct twl4030_platform_data beagle_twldata = {
 	.gpio		= &beagle_gpio_data,
 	.vmmc1		= &beagle_vmmc1,
 	.vsim		= &beagle_vsim,
+	.vaux2		= &usb_power,
 };
 
 static struct i2c_board_info __initdata beagle_i2c_eeprom[] = {
