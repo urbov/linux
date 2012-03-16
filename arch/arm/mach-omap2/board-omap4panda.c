@@ -27,6 +27,7 @@
 #include <linux/i2c/twl.h>
 #include <linux/regulator/machine.h>
 #include <linux/regulator/fixed.h>
+#include <linux/ti_wilink_st.h>
 #include <linux/wl12xx.h>
 
 #include <mach/hardware.h>
@@ -56,13 +57,27 @@
 #define HDMI_GPIO_HPD  63 /* Hotplug detect */
 
 /* wl127x BT, FM, GPS connectivity chip */
-static int wl1271_gpios[] = {46, -1, -1};
+static struct ti_st_plat_data wilink_platform_data = {
+        .nshutdown_gpio	= 46,
+        .dev_name		= "/dev/ttyO1",
+        .flow_cntrl		= 1,
+        .baud_rate		= 3000000,
+        .chip_enable		= NULL,
+        .suspend		= NULL,
+        .resume		= NULL,
+};
+
 static struct platform_device wl1271_device = {
 	.name	= "kim",
 	.id	= -1,
 	.dev	= {
-		.platform_data	= &wl1271_gpios,
+		.platform_data	= &wilink_platform_data,
 	},
+};
+
+static struct platform_device btwilink_device = {
+	.name	= "btwilink",
+	.id	= -1,
 };
 
 static struct gpio_led gpio_leds[] = {
@@ -91,9 +106,11 @@ static struct platform_device leds_gpio = {
 	},
 };
 
+
 static struct platform_device *panda_devices[] __initdata = {
 	&leds_gpio,
 	&wl1271_device,
+	&btwilink_device,
 };
 
 static const struct usbhs_omap_board_data usbhs_bdata __initconst = {
