@@ -44,6 +44,7 @@
 #include <plat/board.h>
 #include <plat/common.h>
 #include <video/omapdss.h>
+#include <video/omap-panel-generic-dpi.h>
 #include <video/omap-panel-dvi.h>
 #include <plat/gpmc.h>
 #include <plat/nand.h>
@@ -349,14 +350,21 @@ static void beagle_disable_lcd(struct omap_dss_device *dssdev)
        return;
 }
 
+static struct panel_generic_dpi_data lcd_panel = {
+	.name = "tfc_s9700rtwv35tr-01b",
+	.platform_enable = beagle_enable_lcd,
+	.platform_disable = beagle_disable_lcd,
+};
+
 static struct omap_dss_device beagle_lcd_device = {
 	.type                   = OMAP_DISPLAY_TYPE_DPI,
 	.name                   = "lcd",
-	.driver_name		= "tfc_s9700rtwv35tr-01b",
+	.driver_name		= "generic_dpi_panel",
 	.phy.dpi.data_lines     = 24,
 	.platform_enable        = beagle_enable_lcd,
 	.platform_disable       = beagle_disable_lcd,
 	.reset_gpio 		= -EINVAL,
+	.data			= &lcd_panel,
 };
 
 static struct omap_dss_device *beagle_dss_devices[] = {
@@ -586,6 +594,8 @@ static struct tsc2007_platform_data tsc2007_info = {
 static struct i2c_board_info __initdata beagle_i2c2_bbtoys_ulcd[] = {
 	{
 		I2C_BOARD_INFO("tlc59108", 0x40),
+	},
+	{
 		I2C_BOARD_INFO("tsc2007", 0x48),
 		.irq = OMAP_GPIO_IRQ(OMAP3BEAGLE_TSC2007_GPIO),
 		.platform_data = &tsc2007_info,
@@ -777,7 +787,7 @@ static void __init omap3_beagle_init(void)
 
 	/* TODO: set lcd_driver_name by command line or device tree */
 	beagle_config.lcd_driver_name = "tfc_s9700rtwv35tr-01b",
-	//lcd_panel.name = beagle_config.lcd_driver_name;
+	lcd_panel.name = beagle_config.lcd_driver_name;
 
 	platform_add_devices(omap3_beagle_devices,
 			ARRAY_SIZE(omap3_beagle_devices));
