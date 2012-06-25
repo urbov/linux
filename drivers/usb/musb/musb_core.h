@@ -444,6 +444,10 @@ struct musb {
 #endif
 	/* id for multiple musb instances */
 	u8			id;
+	int                     xceiv_old_state;
+#ifdef CONFIG_DEBUG_FS
+	struct dentry           *debugfs_root;
+#endif
 };
 
 static inline struct musb *gadget_to_musb(struct usb_gadget *g)
