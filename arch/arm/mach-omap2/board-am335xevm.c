@@ -2691,6 +2691,7 @@ static void beaglebone_cape_setup(struct memory_accessor *mem_acc, void *context
 		
 		beaglebone_leds_free = 0;
 		dvileds_init(0,0);
+		beaglebone_spi1_free = 0;
 		mcasp0_init(0,0);
 	
 		if (!strncmp("00A1", cape_config.version, 4) || !strncmp("000A", cape_config.version, 4)) {
@@ -3803,7 +3804,7 @@ static void __init am335x_evm_init(void)
 	am33xx_mux_init(board_mux);
 	omap_serial_init();
 	am335x_rtc_init();
-	clkout2_enable();
+	//clkout2_enable();
 	am335x_evm_i2c_init();
 	omap_sdrc_init(NULL, NULL);
 	usb_musb_init(&musb_board_data);
