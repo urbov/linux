@@ -18,3 +18,31 @@
 		reg = <0x80000000 0x10000000>; /* 256 MB */
 	};
 };
+
+&i2c1 {
+	clock-frequency = <400000>;
+
+	tps: tps@2D {
+		reg = <0x2D>;
+	};
+};
+
+/include/ "tps65910.dtsi"
+
+&vdd1_reg {
+	/* VDD_MPU voltage limits 0.95V - 1.26V with +/-4% tolerance */
+	regulator-name = "vdd_mpu";
+	regulator-min-microvolt = <912500>;
+	regulator-max-microvolt = <1312500>;
+	regulator-boot-on;
+	regulator-always-on;
+};
+
+&vdd2_reg {
+	/* VDD_CORE voltage limits 0.95V - 1.1V with +/-4% tolerance */
+	regulator-name = "vdd_core";
+	regulator-min-microvolt = <912500>;
+	regulator-max-microvolt = <1150000>;
+	regulator-boot-on;
+	regulator-always-on;
+};
