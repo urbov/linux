@@ -184,5 +184,10 @@
 			usb0-phy = <&usb0_phy>;
 			usb1-phy = <&usb1_phy>;
 		};
+
+		rtc@44e3e000 {
+			compatible = "ti,da830-rtc";
+			ti,hwmods = "rtc";
+		};
 	};
 };
