@@ -36,6 +36,8 @@
 #include <linux/io.h>
 #include <linux/pm_runtime.h>
 #include <linux/davinci_emac.h>
+#include <linux/of.h>
+#include <linux/of_device.h>
 
 /*
  * This timeout definition is a worst-case ultra defensive measure against
@@ -289,6 +291,37 @@ static int davinci_mdio_write(struct mii_bus *bus, int phy_id,
 	return 0;
 }
 
+#ifdef CONFIG_OF
+static const struct of_device_id davinci_mdio_dt_ids[] = {
+	{ .compatible = "ti,davinci-mdio" },
+	{ }
+};
+MODULE_DEVICE_TABLE(of, davinci_mdio_dt_ids);
+
+static inline int davinci_mdio_probe_dt(struct device *dev,
+					struct mdio_platform_data *pdata)
+{
+	struct device_node *np = dev->of_node;
+	const struct of_device_id *of_id =
+			of_match_device(davinci_mdio_dt_ids, dev);
+	u32 tmp;
+
+	if (!of_id)
+		return 0;
+
+	if (of_property_read_u32(np, "bus-freq", &tmp) == 0)
+		pdata->bus_freq = tmp;
+
+	return 0;
+}
+#else
+static inline int davinci_mdio_probe_dt(struct device *dev,
+					struct mdio_platform_data *pdata)
+{
+	return 0;
+}
+#endif
+
 static int __devinit davinci_mdio_probe(struct platform_device *pdev)
 {
 	struct mdio_platform_data *pdata = pdev->dev.platform_data;
@@ -305,6 +338,10 @@ static int __devinit davinci_mdio_probe(struct platform_device *pdev)
 	}
 
 	data->pdata = pdata ? (*pdata) : default_pdata;
+
+	ret = davinci_mdio_probe_dt(dev, pdata);
+	if (ret < 0)
+		goto free_mem;
 
 	data->bus = mdiobus_alloc();
 	if (!data->bus) {
@@ -389,6 +426,7 @@ bail_out:
 	pm_runtime_put_sync(&pdev->dev);
 	pm_runtime_disable(&pdev->dev);
 
+free_mem:
 	kfree(data);
 
 	return ret;
@@ -471,6 +509,7 @@ static struct platform_driver davinci_mdio_driver = {
 		.name	 = "davinci_mdio",
 		.owner	 = THIS_MODULE,
 		.pm	 = &davinci_mdio_pm_ops,
+		.of_match_table = of_match_ptr(davinci_mdio_dt_ids),
 	},
 	.probe = davinci_mdio_probe,
 	.remove = __devexit_p(davinci_mdio_remove),

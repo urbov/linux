@@ -1,0 +1,24 @@
+Davinci MDIO DT bindings
+
+Required properties:
+
+ - compatible : should be "ti,davinci-mdio"
+
+Optional properties:
+
+ - bus-freq : an integer to specify the bus speed
+
+Examples:
+
+	mdio: davinci_mdio@4a101000 {
+		compatible = "ti,davinci-mdio";
+		ti,hwmods = "davinci_mdio";
+	};
+
+ or
+
+	mdio: davinci_mdio@4a101000 {
+		compatible = "ti,davinci-mdio";
+		reg = <0x4a101000 0x100>;
+	};
+
