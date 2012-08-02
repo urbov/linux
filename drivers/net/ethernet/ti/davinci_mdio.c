@@ -332,6 +332,8 @@ static int __devinit davinci_mdio_probe(struct platform_device *pdev)
 		goto bail_out;
 	}
 
+	clk_enable(data->clk);
+
 	dev_set_drvdata(dev, data);
 	data->dev = dev;
 	spin_lock_init(&data->lock);
@@ -379,8 +381,11 @@ bail_out:
 	if (data->bus)
 		mdiobus_free(data->bus);
 
-	if (data->clk)
+	if (data->clk) {
+		clk_disable(data->clk);
 		clk_put(data->clk);
+	}
+
 	pm_runtime_put_sync(&pdev->dev);
 	pm_runtime_disable(&pdev->dev);
 
@@ -397,8 +402,11 @@ static int __devexit davinci_mdio_remove(struct platform_device *pdev)
 	if (data->bus)
 		mdiobus_free(data->bus);
 
-	if (data->clk)
+	if (data->clk) {
+		clk_disable(data->clk);
 		clk_put(data->clk);
+	}
+
 	pm_runtime_put_sync(&pdev->dev);
 	pm_runtime_disable(&pdev->dev);
 
@@ -427,6 +435,8 @@ static int davinci_mdio_suspend(struct device *dev)
 	data->suspended = true;
 	spin_unlock(&data->lock);
 
+	clk_disable(data->clk);
+
 	return 0;
 }
 
@@ -434,6 +444,8 @@ static int davinci_mdio_resume(struct device *dev)
 {
 	struct davinci_mdio_data *data = dev_get_drvdata(dev);
 	u32 ctrl;
+
+	clk_enable(data->clk);
 
 	spin_lock(&data->lock);
 	pm_runtime_put_sync(data->dev);
