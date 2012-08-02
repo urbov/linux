@@ -684,6 +684,19 @@ static struct omap_hwmod am33xx_cpgmac0_hwmod = {
 	},
 };
 
+static struct omap_hwmod am33xx_cpsw_mdio_hwmod = {
+	.name		= "davinci_mdio",
+	.class		= &am33xx_cpgmac0_hwmod_class,
+	.clkdm_name	= "cpsw_125mhz_clkdm",
+	.main_clk	= "cpsw_125mhz_gclk",
+	.prcm		= {
+		.omap4	= {
+			.clkctrl_offs	= AM33XX_CM_PER_CPGMAC0_CLKCTRL_OFFSET,
+			.modulemode	= MODULEMODE_SWCTRL,
+		},
+	},
+};
+
 /*
  * dcan class
  */
@@ -2501,6 +2514,23 @@ static struct omap_hwmod_ocp_if am33xx_l4_hs__cpgmac0 = {
 	.user		= OCP_USER_MPU,
 };
 
+static struct omap_hwmod_addr_space am33xx_cpsw_mdio_addr_space[] = {
+	{
+		.pa_start	= 0x4a101000,
+		.pa_end		= 0x4a101000 + SZ_256 - 1,
+		.flags		= ADDR_TYPE_RT,
+	},
+	{ }
+};
+
+static struct omap_hwmod_ocp_if am33xx_l4_hs__cpsw_mdio = {
+	.master		= &am33xx_l4_hs_hwmod,
+	.slave		= &am33xx_cpsw_mdio_hwmod,
+	.clk		= "cpsw_125mhz_gclk",
+	.addr		= am33xx_cpsw_mdio_addr_space,
+	.user		= OCP_USER_MPU,
+};
+
 static struct omap_hwmod_addr_space am33xx_elm_addr_space[] = {
 	{
 		.pa_start	= 0x48080000,
@@ -3383,6 +3413,7 @@ static struct omap_hwmod_ocp_if *am33xx_hwmod_ocp_ifs[] __initdata = {
 	&am33xx_l3_main__tptc2,
 	&am33xx_l3_s__usbss,
 	&am33xx_l4_hs__cpgmac0,
+	&am33xx_l4_hs__cpsw_mdio,
 	NULL,
 };
 
