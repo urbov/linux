@@ -251,7 +251,7 @@ static void pcs_pin_dbg_show(struct pinctrl_dev *pctldev,
 
 	pcs = pinctrl_dev_get_drvdata(pctldev);
 
-	val = pcs->read(pcs->base + offset);
+	val = pcs->read(pcs->base + offset * (pcs->width / BITS_PER_BYTE));
 	val &= pcs->fmask;
 
 	seq_printf(s, "%08x %s " , val, DRIVER_NAME);
