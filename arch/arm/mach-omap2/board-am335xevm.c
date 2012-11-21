@@ -1799,7 +1799,7 @@ static struct gpio_led lcd7_gpio_leds[] = {
 		.gpio           = BEAGLEBONE_USR4_LED,
 	},
 	{
-		.name			= "lcd7::usr",
+		.name			= "lcd::usr",
 		.default_trigger	= "heartbeat",
 		.gpio			= BEAGLEBONELCD7_USR_LED,
 	},
@@ -3336,6 +3336,9 @@ static void beaglebone_cape_setup(struct memory_accessor *mem_acc, void *context
 
 			enable_ehrpwm1(0,0);
 			setup_pin_mux(ehrpwm1a_pin_mux);
+
+			beaglebone_leds_free = 0;
+			lcd7leds_init(0,0);
 		}
 	}
 	
