@@ -305,6 +305,10 @@
 				compatible = "bone-generic-cape";
 			};
 
+			bone_lvds_cape: cape@7 {
+				compatible = "bone-generic-cape";
+			};
+
 			/* overrides; no EEPROM (prototyping) */
 //			override@3 {
 //				compatible = "bone-capebus-slot-override";
@@ -705,6 +709,23 @@
 				gpio-key,wakeup;
 			};
 		};
+	};
+};
+
+&bone_lvds_cape {
+	board-name = "BeagleBone LVDS LCD CAPE";
+
+	/* hacky, since this is not a proper DT platform device */
+	/* but until we have DT bindings... */
+	lvds {
+		compatible = "da8xx-dt";
+		pinctrl-names = "default";
+		pinctrl-0 = <&bone_lcd3_cape_lcd_pins>;
+
+		ti,hwmods = "lcdc";
+
+		disp-pll = <371000000>;
+		panel-type = "chalkelec-lvds-10in";
 	};
 };
 

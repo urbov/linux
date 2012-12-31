@@ -371,6 +371,19 @@ static struct da8xx_panel known_lcd_panels[] = {
 		.pxl_clk = 96000000,
 		.invert_pxl_clk = 0,
 	},
+	[10] = {
+		.name = "chalkelec-lvds-10in",
+		.width = 1280,
+		.height = 800,
+		.hfp = 109,
+		.hbp = 139,
+		.hsw = 39,
+		.vfp = 5,
+		.vbp = 19,
+		.vsw = 5,
+		.pxl_clk = 74250000,
+		.invert_pxl_clk = 0,
+	},
 };
 
 /* Enable the Raster Engine of the LCD Controller */
@@ -1375,6 +1388,7 @@ static unsigned int da8xxfb_pixel_clk_period(struct da8xx_fb_par *par)
 	unsigned long long pix_clk_period_picosec = 1000000000000ULL;
 
 	lcd_clk = clk_get_rate(par->lcdc_clk);
+	printk("lcd_clk = %d, pxl_clk = %d\n", lcd_clk, par->pxl_clk);
 	div = lcd_clk / par->pxl_clk;
 	configured_pix_clk = (lcd_clk / div);
 
